@@ -16,9 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
+from django.contrib.auth.views import LoginView, LogoutView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # anything that's not hte admin page, go to this path
     url(r'', include('blog.urls')),
+    url(r'accounts/login/$', LoginView.as_view(template_name='registration/login.html'), name='login'),
+    # when you loguot, the next page you go to is just the homepage, ie. the post list page
+    url(r'accounts/logout/$', LogoutView.as_view(template_name='registration/login.html'), name='logout',
+        kwargs={'next_page': '/'})
 ]
