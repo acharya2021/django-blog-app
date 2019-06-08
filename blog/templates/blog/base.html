@@ -1,13 +1,77 @@
 <!doctype html>
+{% load staticfiles %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Blog</title>
+    {#    bootstrap#}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+
+    {#    medium style editor#}
+    <script src="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/js/medium-editor.min.js"></script>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/css/medium-editor.min.css"
+          type="text/css" media="screen" charset="utf-8">
+
+    {#    custom css#}
+    {#    use the static template tag to build the URL for the given relative path#}
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+    {#    google fonts: Montserrat and Russo One #}
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Russo+One&display=swap" rel="stylesheet">
+
 </head>
 <body>
+{#navbar#}
+<nav class="navbar navbar-default techfont custom-navbar">
+    {#    anything we put in the navbar will be contained #}
+    <div class="container">
+        {#    everything on the left hand side #}
+        <ul class="nav navbar-nav">
+            <li><a class="navbar-brand bigbrand" href="{% url 'post_list' %}">{{ user.username }}'s blog</a></li>
+            <li><a href="{% url 'about' %}">About</a></li>
+            <li><a href="https://www.github.com">GitHub</a></li>
+            <li><a href="https://www.linkedin.com">LinkedIn</a></li>
+        </ul>
 
+
+        {#    everythin to the right #}
+        <ul class="nav navbar-nav navbar-right">
+            {#        comes from the auth library in django#}
+            {% if user.is_authenticated %}
+                <li>
+                    <a href="{% url 'post_new' %}">New Post</a>
+                    <a href="{% url 'post_draft_list' %}">Drafts</a>
+                    <a href="{% url 'logout' %}">Logout</a>
+                </li>
+                <li>
+                    <a>Welcome: {{ user.username }}</a>
+                </li>
+                {#                if you are not logged in, you want to log in #}
+            {% else %}
+                {#                to use a glyphicon, use span #}
+                <li><a class="nav navbar-right" href="{% url 'login' %}"><span class="glyphicon glyphicon-user"></span></a>
+                </li>
+            {% endif %}
+
+        </ul>
+    </div>
+</nav>
+
+
+{#content block#}
+{#these divs refer to the bootstrap ability to collapse things correctly #}
+<div class="content container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="blog_posts">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

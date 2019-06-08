@@ -23,7 +23,7 @@ urlpatterns = [
     # anything that's not hte admin page, go to this path
     url(r'', include('blog.urls')),
     url(r'accounts/login/$', LoginView.as_view(template_name='registration/login.html'), name='login'),
-    # when you loguot, the next page you go to is just the homepage, ie. the post list page
+    # when you logout, the next page you go to is just the homepage, ie. the post list page
     url(r'accounts/logout/$', LogoutView.as_view(template_name='registration/login.html'), name='logout',
         kwargs={'next_page': '/'})
 ]
