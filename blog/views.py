@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils import timezone
 from django.views.generic import (TemplateView, ListView,
                                   DetailView,
                                   CreateView,
@@ -7,6 +8,7 @@ from django.views.generic import (TemplateView, ListView,
                                   DeleteView)
 # waits until you've actually deleted a post to give you back the success url
 from django.urls import reverse_lazy
+from django.contrib.auth.decorators import login_required
 from blog.models import Post, Comment
 from blog.forms import PostForm, CommentForm
 
@@ -80,3 +82,60 @@ class DraftListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         # make sure it doesn't have a published date
         return Post.objects.filter(published_date__isnull=True).order_by('created_date')
+
+
+############################
+############################
+
+@login_required
+def post_publish(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    post.publish()
+    return redirect('post_detail', pk=pk)
+
+
+@login_required
+def add_comment_to_post(request, pk):
+    # the pk used is the primary key provided as a parameter
+    # it links the comment to the post
+    post = get_object_or_404(Post, pk=pk)
+
+    # someone actually filled in the form and hit enter
+    if request.method == "POST":
+        # this form will be injected into the HTML through the context dictionary
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            # have at least some sort of form in memory
+            comment = form.save(commit=False)
+            # connect that particular comment's post attribute to the post object
+            comment.post = post
+            # now save it
+            comment.save()
+            return redirect('post_detail', pk=post.pk)
+
+    # if someone has not filled out the comment form
+    else:
+        form = CommentForm()
+    return render(request, 'blog/comment_form.html', {'form': form})
+
+
+@login_required
+def comment_approve(request, pk):
+    # grab the comment in this case
+    comment = get_object_or_404(Comment, pk=pk)
+    # set the property to true while it was false by default in the models
+    comment.approve()
+    # what happens once you approve a comment?
+    # to go to the post of that comment, you need post.pk
+    # asking what's the pk of the post that this comment was linked to
+    return redirect('post_detail', pk=comment.post.pk)
+
+
+@login_required
+def comment_remove(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    # by the time you get to redirect, it's not gonna remember what the pk was
+    # so necessary to store it before hand
+    post_pk = comment.post.pk
+    comment.delete()
+    return redirect('post_detail', post_pk)
