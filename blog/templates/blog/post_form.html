@@ -1,4 +1,15 @@
 {% extends 'blog/base.html' %}
 {% block content %}
+    <h1>New Post</h1>
+    <form class="post-form" method="POST">
+        {#    with any form, you need a csrf token #}
+        {#    the server will verify for authorization if the token received is the same as the one generated previously #}
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+{#    .editable is attached as a widget for the text on the form #}
+    <script>var editor = new MediumEditor('.editable');</script>
+
 
 {% endblock %}
