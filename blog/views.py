@@ -31,6 +31,7 @@ class PostListView(ListView):
         # lte means less than or equal to
         # the dash - orders them in a descending order, so that the most recent comes up front
         # SELECT * FROM posts WHERE pub_date <= now;
+        # can be used to create a wishlist/favorite item list
         return Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
 
 

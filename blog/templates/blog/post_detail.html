@@ -1,0 +1,64 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+    {#    put in the post title #}
+    <h1 class="posttitle loader">{{ post.title }}</h1>
+    {% if post.published_date %}
+        <div class="date postdate">
+            {{ post.published_date }}
+        </div>
+        {#        if it is not published, have a button to do so #}
+    {% else %}
+        <a class="btn btn-default" href="{% url 'post_publish' pk=post.pk %}">Publish</a>
+    {% endif %}
+
+    {#    it is helpful to add classes for organization whether or not you are going to use them#}
+    <p class="postcontent">
+        {#    safe will translate the html to look like we expect it to look, for instance <b> bold text </b>#}
+        {#        if the line breaks, the html will also call line break there#}
+        {{ post.title|safe|linebreaksbr }}
+    </p>
+    {% if user.is_authenticated %}
+        {#        two buttons, one to edit, one to remove#}
+        <a class="btn btn-primary" href="{% url 'post_edit' pk=post.pk %}">
+            <span class="glyphicon glyphicon-pencil"></span>
+        </a>
+        <a class="btn btn-primary" href="{% url 'post_remove' pk=post.pk %}">
+            <span class="glyphicon glyphicon-remove"></span>
+        </a>
+    {% endif %}
+
+
+    <hr>
+    {#    let's add a button that allows us to add comments to posts #}
+    <a class="btn btn-primary btn-comment" href="{% url 'add_comment_to_post' pk=post.pk %}">Add Comment</a>
+    <div class="container">
+        {% for comment in post.comments.all %}
+            {#        add a break#}
+            {#        check if the user is authenticated, otherwise i don't want to display it #}
+            <br>
+            {#        the second condition is a boolean field in the COmment model#}
+            {% if user.is_authenticated or comment.approved_comment %}
+                {#                show the creation date #}
+                {{ comment.created_date }}
+                {% if not comment.approved_comment %}
+                    {#                two buttons, one to remove, one to edit #}
+                    <a class="btn btn-default" href="{% url 'comment_remove' pk=comment.pk %}">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+
+                    <a class="btn btn-primary" href="{% url 'comment_approve' pk=comment.pk %}">
+                        <span class="glyphicon glyphicon-ok"></span>
+                    </a>
+
+                {% endif %}
+
+                <p>{{ comment.text|safe|linebreaks }}</p>
+                <p>Posted By: {{ comment.author }}</p>
+            {% endif %}
+            {#            if there was nothing in the post.comments.all #}
+        {% empty %}
+            <p>No Comments</p>
+        {% endfor %}
+    </div>
+
+{% endblock %}
