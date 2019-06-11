@@ -8,22 +8,22 @@
         </div>
         {#        if it is not published, have a button to do so #}
     {% else %}
-        <a class="btn btn-default" href="{% url 'post_publish' pk=post.pk %}">Publish</a>
+        <a class="btn btn-outline-dark" href="{% url 'post_publish' pk=post.pk %}">Publish</a>
     {% endif %}
 
     {#    it is helpful to add classes for organization whether or not you are going to use them#}
     <p class="postcontent">
         {#    safe will translate the html to look like we expect it to look, for instance <b> bold text </b>#}
         {#        if the line breaks, the html will also call line break there#}
-        {{ post.title|safe|linebreaksbr }}
+        {{ post.text|safe|linebreaksbr }}
     </p>
     {% if user.is_authenticated %}
         {#        two buttons, one to edit, one to remove#}
         <a class="btn btn-primary" href="{% url 'post_edit' pk=post.pk %}">
-            <span class="glyphicon glyphicon-pencil"></span>
+            <span class="fa fa-pencil"></span>
         </a>
         <a class="btn btn-primary" href="{% url 'post_remove' pk=post.pk %}">
-            <span class="glyphicon glyphicon-remove"></span>
+            <span class="fa fa-remove"></span>
         </a>
     {% endif %}
 
@@ -39,15 +39,15 @@
             {#        the second condition is a boolean field in the COmment model#}
             {% if user.is_authenticated or comment.approved_comment %}
                 {#                show the creation date #}
-                {{ comment.created_date }}
+                {{ comment.create_date }}
                 {% if not comment.approved_comment %}
                     {#                two buttons, one to remove, one to edit #}
                     <a class="btn btn-default" href="{% url 'comment_remove' pk=comment.pk %}">
-                        <span class="glyphicon glyphicon-remove"></span>
+                        <span class="fa fa-remove"></span>
                     </a>
 
                     <a class="btn btn-primary" href="{% url 'comment_approve' pk=comment.pk %}">
-                        <span class="glyphicon glyphicon-ok"></span>
+                        <span class="fa fa-check"></span>
                     </a>
 
                 {% endif %}

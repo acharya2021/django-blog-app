@@ -13,7 +13,8 @@
         {#    using template tags, url 'login' #}
         <form action="{% url 'login' %}" method="POST">
             {% csrf_token %}
-            {% form.as_p %}
+{#            you are essentially injecting that form in #}
+            {{ form.as_p }}
             <input type="submit" class="btn btn-primary" value="Login">
             {#            the views.login will supply the next value for us #}
             <input type="hidden" name="next" value="{{ next }}">

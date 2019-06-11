@@ -19,7 +19,8 @@ class Post(models.Model):
     # don't put max-length because you don't know how long the text is going to be
     text = models.TextField()
     # this is how you add the date the post was created, at the current timezone
-    create_date = models.DateTimeField(default=timezone.now())
+    # don't execute now() here. Just refer to it.
+    create_date = models.DateTimeField(default=timezone.now)
     # blank because maybe you don't want to publish it yet
     # null because you don't have any pub date whatsoever
     published_date = models.DateTimeField(blank=True, null=True)
@@ -64,7 +65,7 @@ class Comment(models.Model):
     author = models.CharField(max_length=200)
     text = models.TextField()
     # once you hit create comment, that DateTimeField should be put into place
-    create_date = models.DateTimeField(default=timezone.now())
+    create_date = models.DateTimeField(default=timezone.now)
     # by default, it will not have been approved
     approved_comment = models.BooleanField(default=False)
 

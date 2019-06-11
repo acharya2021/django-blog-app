@@ -82,7 +82,7 @@ class DraftListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         # make sure it doesn't have a published date
-        return Post.objects.filter(published_date__isnull=True).order_by('created_date')
+        return Post.objects.filter(published_date__isnull=True).order_by('create_date')
 
 
 ############################
